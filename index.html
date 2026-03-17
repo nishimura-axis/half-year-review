@@ -4,6 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>半期振り返り & 来年度ビジョン</title>
+    <script>
+        (function() {
+            var hash = '1bd80041ec4d3b0e4915026ec450c1b867b55d8725b1fcc79977b9a3d53b9da8';
+            async function sha256(str) {
+                var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+                return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+            }
+            async function check() {
+                var stored = sessionStorage.getItem('auth');
+                if (stored) {
+                    var h = await sha256(stored);
+                    if (h === hash) { document.documentElement.style.display = ''; return; }
+                }
+                var pw = prompt('パスワードを入力してください');
+                if (!pw) { document.body.innerHTML = ''; return; }
+                var h = await sha256(pw);
+                if (h === hash) {
+                    sessionStorage.setItem('auth', pw);
+                    document.documentElement.style.display = '';
+                } else {
+                    alert('パスワードが違います');
+                    document.body.innerHTML = '';
+                }
+            }
+            document.documentElement.style.display = 'none';
+            check();
+        })();
+    </script>
     <style>
         :root {
             --bg: #0a0a0a;
